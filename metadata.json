@@ -1,0 +1,6 @@
+{
+  "name": "FinanCasal - Gestão Financeira & Metas",
+  "description": "Aplicativo financeiro para casal com controle de receitas e despesas fixas/pontuais, metas de compra com wishlist, logs de auditoria por usuário, sincronização com Supabase e API para Google Spark/Planilhas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
