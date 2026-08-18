@@ -104,25 +104,25 @@ export const Sidebar: React.FC<SidebarProps> = ({
               key={item.id}
               id={`sidebar-tab-${item.id}`}
               onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all group ${
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all group border ${
                 isActive
-                  ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/20'
-                  : 'text-slate-300 hover:text-white hover:bg-white/5'
-              } ${item.highlight && !isActive ? 'text-amber-300 bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/20' : ''}`}
+                  ? 'bg-blue-500/10 text-blue-200 border-blue-500/20'
+                  : 'text-slate-300 hover:text-white hover:bg-white/5 border-transparent'
+              } ${item.highlight && !isActive ? 'text-amber-300 bg-amber-500/10 hover:bg-amber-500/15 border-amber-500/20' : ''}`}
             >
               <div className="flex items-center gap-3 min-w-0">
                 <Icon className={`w-4 h-4 shrink-0 transition-colors ${
-                  isActive 
-                    ? 'text-white' 
-                    : item.highlight 
-                      ? 'text-amber-400' 
+                  isActive
+                    ? 'text-blue-300'
+                    : item.highlight
+                      ? 'text-amber-400'
                       : 'text-slate-400 group-hover:text-slate-200'
                 }`} />
                 <span className="truncate">{item.label}</span>
               </div>
 
               {isActive && (
-                <ChevronRight className="w-3.5 h-3.5 text-white/70" />
+                <ChevronRight className="w-3.5 h-3.5 text-blue-300/70" />
               )}
             </button>
           );

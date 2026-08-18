@@ -55,7 +55,7 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
       <div className="bg-slate-900/90 rounded-2xl max-w-md w-full p-6 shadow-2xl border border-white/15 backdrop-blur-xl text-slate-100">
         
         <div className="flex items-center justify-between pb-3 border-b border-white/10">
-          <div>
+          <div className="min-w-0">
             <h3 className="text-base font-bold text-white flex items-center gap-1.5">
               <CircleDollarSign className="w-5 h-5 text-blue-400" />
               Economizar para Meta

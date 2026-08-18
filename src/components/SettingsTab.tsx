@@ -152,7 +152,7 @@ export const SettingsTab: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 text-center">
             <span className="text-[11px] text-slate-400 block font-medium">Transações</span>
             <span className="text-lg sm:text-xl font-bold text-white mt-1 block">
@@ -182,12 +182,12 @@ export const SettingsTab: React.FC = () => {
 
       {/* 3. Zona Crítica / Zerar Todos os Dados */}
       <div className="p-6 rounded-2xl bg-rose-950/20 border border-rose-500/30 backdrop-blur-md space-y-4">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-start gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+          <div className="flex items-start gap-3 min-w-0">
             <div className="w-10 h-10 rounded-xl bg-rose-500/20 border border-rose-500/30 flex items-center justify-center text-rose-400 shrink-0">
               <ShieldAlert className="w-5 h-5" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h3 className="text-sm sm:text-base font-bold text-rose-300">
                 Zona de Perigo: Zerar Banco de Dados
               </h3>
@@ -199,7 +199,7 @@ export const SettingsTab: React.FC = () => {
 
           <button
             onClick={() => setIsResetModalOpen(true)}
-            className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-rose-950/50 border border-rose-400/40 transition-all flex items-center gap-2 shrink-0"
+            className="px-4 py-2.5 bg-rose-600 hover:bg-rose-500 active:scale-95 text-white font-bold text-xs sm:text-sm rounded-xl shadow-lg shadow-rose-950/50 border border-rose-400/40 transition-all flex items-center justify-center gap-2 shrink-0"
           >
             <Trash2 className="w-4 h-4" />
             <span>Zerar Todos os Dados</span>

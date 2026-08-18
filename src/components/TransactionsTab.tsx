@@ -120,7 +120,7 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
       
       {/* Top Action & Search Bar */}
       <div className="flex items-center justify-between gap-3">
-        <div className="relative flex-1">
+        <div className="relative flex-1 min-w-0">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
             id="tx-search-input"
@@ -322,8 +322,8 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
                 className="bg-white/5 p-3.5 sm:p-4 rounded-2xl border border-white/10 hover:border-white/20 hover:bg-white/[0.08] transition-all backdrop-blur-md shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3"
               >
                 {/* Left: Icon, Description, Category, Tags */}
-                <div className="flex items-start sm:items-center gap-3">
-                  
+                <div className="flex items-start sm:items-center gap-3 min-w-0">
+
                   {/* Status Checkbox Button */}
                   <button
                     onClick={() => toggleTransactionStatus(tx.id)}
@@ -337,9 +337,9 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
                     {isPaid ? <CheckCircle2 className="w-4 h-4" /> : <Clock className="w-3.5 h-3.5" />}
                   </button>
 
-                  <div>
+                  <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-white text-sm">{tx.description}</span>
+                      <span className="font-bold text-white text-sm break-words">{tx.description}</span>
                       
                       {/* Fixed vs Pontual Badge */}
                       {isFixed ? (

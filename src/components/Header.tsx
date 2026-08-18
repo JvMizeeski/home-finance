@@ -77,14 +77,14 @@ export const Header: React.FC<HeaderProps> = () => {
   return (
     <header className="bg-slate-900/60 backdrop-blur-xl border-b border-white/10 sticky top-0 z-30 shadow-lg shadow-black/20">
       <div className="w-full px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          
-          {/* Logo & Brand (Shown especially on mobile or compact mode) */}
+        <div className="flex flex-wrap items-center justify-between gap-y-2 min-h-16 py-2">
+
+          {/* Logo & Brand */}
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-emerald-400 rounded-xl shadow-md shadow-blue-500/20 flex items-center justify-center text-slate-950 font-black text-sm">
+            <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-emerald-400 rounded-xl shadow-md shadow-blue-500/20 flex items-center justify-center text-slate-950 font-black text-sm shrink-0">
               HF
             </div>
-            <div>
+            <div className="hidden sm:block">
               <h1 className="font-bold text-white text-lg tracking-tight leading-none">
                 Home Finance
               </h1>
@@ -93,10 +93,10 @@ export const Header: React.FC<HeaderProps> = () => {
 
           {/* Month/Year Selector, Manual Sync & User Profile */}
           <div className="flex items-center gap-2 sm:gap-3">
-            
+
             {/* Year & Month Filter Controls */}
             <div className="flex items-center bg-white/5 hover:bg-white/10 rounded-xl p-1 border border-white/10 backdrop-blur-md transition-colors gap-1">
-              <Calendar className="w-4 h-4 text-blue-400 shrink-0 ml-1.5 hidden xs:block" />
+              <Calendar className="w-4 h-4 text-blue-400 shrink-0 ml-1.5 hidden sm:block" />
               
               {/* Month Select */}
               <select

@@ -130,7 +130,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
           {/* Type Selector (Despesa vs Receita) */}
           <div>
             <label className="block text-slate-300 font-semibold mb-1.5">Tipo de Lançamento</label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button
                 type="button"
                 onClick={() => setType('expense')}
