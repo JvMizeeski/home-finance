@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { DataProvider, useData } from './context/DataContext';
+import { PinLockProvider, usePinLock } from './context/PinLockContext';
+import { PinLockScreen } from './components/PinLockScreen';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
 import { Navigation, TabType } from './components/Navigation';
@@ -156,12 +158,26 @@ function MainApp() {
   );
 }
 
-export default function App() {
+function PinGate() {
+  const { isUnlocked } = usePinLock();
+
+  if (!isUnlocked) {
+    return <PinLockScreen />;
+  }
+
   return (
     <AuthProvider>
       <DataProvider>
         <MainApp />
       </DataProvider>
     </AuthProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <PinLockProvider>
+      <PinGate />
+    </PinLockProvider>
   );
 }

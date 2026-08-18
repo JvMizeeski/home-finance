@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
+import { usePinLock } from '../context/PinLockContext';
 import { AuditLogsTab } from './AuditLogsTab';
 import {
   Trash2,
@@ -11,12 +12,14 @@ import {
   Mail,
   Database,
   History,
-  Info
+  Info,
+  Lock
 } from 'lucide-react';
 
 export const SettingsTab: React.FC = () => {
   const { currentUser, availableUsers, switchUser } = useAuth();
   const { resetAllData, transactions, goals, auditLogs, supabaseConfig } = useData();
+  const { lock } = usePinLock();
 
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [confirmationWord, setConfirmationWord] = useState('');
@@ -135,7 +138,34 @@ export const SettingsTab: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Resumo de Dados do Sistema */}
+      {/* 2. Segurança */}
+      <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md">
+        <div className="flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
+              <Lock className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-sm sm:text-base font-bold text-white">
+                Segurança
+              </h3>
+              <p className="text-xs text-slate-400">
+                Bloqueie o app agora — será necessário digitar o PIN novamente para acessar.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={lock}
+            className="px-4 py-2.5 bg-white/10 hover:bg-white/15 text-slate-200 font-semibold text-xs sm:text-sm rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 border border-white/10"
+          >
+            <Lock className="w-4 h-4" />
+            Bloquear Agora
+          </button>
+        </div>
+      </div>
+
+      {/* 3. Resumo de Dados do Sistema */}
       <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md space-y-4">
         <div className="flex items-center gap-2.5 border-b border-white/10 pb-4">
           <div className="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400">
@@ -179,7 +209,7 @@ export const SettingsTab: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Histórico & Logs */}
+      {/* 4. Histórico & Logs */}
       <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md space-y-4">
         <div className="flex items-center gap-2.5 border-b border-white/10 pb-4">
           <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
@@ -198,7 +228,7 @@ export const SettingsTab: React.FC = () => {
         <AuditLogsTab />
       </div>
 
-      {/* 4. Zona Crítica / Zerar Todos os Dados */}
+      {/* 5. Zona Crítica / Zerar Todos os Dados */}
       <div className="p-6 rounded-2xl bg-rose-950/20 border border-rose-500/30 backdrop-blur-md space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex items-start gap-3 min-w-0">
