@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 
-const VALID_PINS = ['1503', '3215'];
+const VALID_PINS = ['1504', '3215'];
 const STORAGE_KEY = 'home_finance_pin_unlocked';
 
 interface PinLockContextType {
