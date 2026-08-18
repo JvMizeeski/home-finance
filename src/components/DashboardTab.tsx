@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { 
@@ -32,6 +32,10 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 }) => {
   const { transactions, goals, selectedMonth, toggleTransactionStatus } = useData();
   const { currentUser } = useAuth();
+
+  // Independent period filter for the "Upcoming Bills" card — always relative
+  // to today, regardless of the global month/year selector above.
+  const [billsPeriod, setBillsPeriod] = useState<'week' | 'month' | 'year'>('month');
 
   // Filter transactions by selectedMonth (or show all if 'all')
   const filteredTxs = transactions.filter(t => {
@@ -88,8 +92,36 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
       userExpenses[key] = (userExpenses[key] || 0) + t.amount;
     });
 
-  // Upcoming bills (pending with due dates)
-  const upcomingBills = [...pendingExpenses]
+  // Upcoming bills card: pending expenses within the chosen period (week/month/year),
+  // always relative to today — independent of the global month/year selector,
+  // since this card is meant as a quick glance, not the detailed history view.
+  const isWithinBillsPeriod = (dateStr: string) => {
+    const d = new Date(`${dateStr}T00:00:00`);
+    if (isNaN(d.getTime())) return false;
+    const now = new Date();
+
+    if (billsPeriod === 'year') {
+      return d.getFullYear() === now.getFullYear();
+    }
+    if (billsPeriod === 'month') {
+      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    }
+    // week: current Monday-to-Sunday range
+    const mondayOffset = (now.getDay() + 6) % 7;
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - mondayOffset);
+    startOfWeek.setHours(0, 0, 0, 0);
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    return d >= startOfWeek && d <= endOfWeek;
+  };
+
+  const periodPendingBills = transactions.filter(t =>
+    t.type === 'expense' && t.status === 'pending' && isWithinBillsPeriod(t.dueDate || t.date)
+  );
+
+  const upcomingBills = [...periodPendingBills]
     .sort((a, b) => (a.dueDate || a.date).localeCompare(b.dueDate || b.date))
     .slice(0, 4);
 
@@ -199,18 +231,46 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 
       {/* Próximas Contas a Vencer (Full Width - 1 per line list) */}
       <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md w-full">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="font-semibold text-white text-sm">
-              Próximas Contas a Vencer
-            </h3>
+        <div className="flex items-center justify-between mb-4 gap-3 flex-wrap">
+          <h3 className="font-semibold text-white text-sm">
+            Próximas Contas a Vencer
+          </h3>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center bg-slate-900/60 p-1 rounded-xl border border-white/10 text-[11px]">
+              <button
+                onClick={() => setBillsPeriod('week')}
+                className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                  billsPeriod === 'week' ? 'bg-white/15 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Semana
+              </button>
+              <button
+                onClick={() => setBillsPeriod('month')}
+                className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                  billsPeriod === 'month' ? 'bg-white/15 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Mês
+              </button>
+              <button
+                onClick={() => setBillsPeriod('year')}
+                className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                  billsPeriod === 'year' ? 'bg-white/15 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                Ano
+              </button>
+            </div>
+
+            <button
+              onClick={() => setActiveTab('transactions')}
+              className="text-xs text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1 hover:underline shrink-0"
+            >
+              Ver todas ({periodPendingBills.length})
+            </button>
           </div>
-          <button
-            onClick={() => setActiveTab('transactions')}
-            className="text-xs text-blue-400 hover:text-blue-300 font-medium flex items-center gap-1 hover:underline"
-          >
-            Ver todas ({pendingExpenses.length})
-          </button>
         </div>
 
         {upcomingBills.length === 0 ? (
