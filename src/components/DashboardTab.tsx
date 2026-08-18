@@ -37,10 +37,16 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
   // to today, regardless of the global month/year selector above.
   const [billsPeriod, setBillsPeriod] = useState<'week' | 'month' | 'year'>('month');
 
-  // Filter transactions by selectedMonth (or show all if 'all')
+  // Filter transactions by selectedMonth (or show all if 'all').
+  // Single denominator: the effective date is the due date when set, else the
+  // launch date — same rule used by the "Próximas Contas a Vencer" card below.
+  // (Previously this matched date OR dueDate independently, which wrongly
+  // counted a bill in the month it was registered even if it's actually due
+  // in a different month.)
   const filteredTxs = transactions.filter(t => {
     if (selectedMonth === 'all') return true;
-    return t.date.startsWith(selectedMonth) || (t.dueDate && t.dueDate.startsWith(selectedMonth));
+    const effectiveDate = t.dueDate || t.date;
+    return effectiveDate.startsWith(selectedMonth);
   });
 
   // Financial Metrics

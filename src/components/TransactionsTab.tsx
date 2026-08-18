@@ -49,11 +49,11 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
   // Filter transactions
   const filteredTransactions = useMemo(() => {
     return transactions.filter(tx => {
-      // Month filter
+      // Month filter — single denominator: due date when set, else launch date
+      // (matches the rule used across the Dashboard cards).
       if (selectedMonth !== 'all') {
-        const matchesDate = tx.date && tx.date.startsWith(selectedMonth);
-        const matchesDueDate = tx.dueDate && tx.dueDate.startsWith(selectedMonth);
-        if (!matchesDate && !matchesDueDate) return false;
+        const effectiveDate = tx.dueDate || tx.date;
+        if (!effectiveDate || !effectiveDate.startsWith(selectedMonth)) return false;
       }
 
       // Search
