@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Transaction, GoalItem, AuditLog, SupabaseConfig } from '../types';
 import { useAuth } from './AuthContext';
+import { useToast } from './ToastContext';
 import { getSupabase, testSupabaseConnection, DEFAULT_SUPABASE_URL, DEFAULT_SUPABASE_ANON_KEY } from '../lib/supabase';
 import confetti from 'canvas-confetti';
 
@@ -37,6 +38,7 @@ const DataContext = createContext<DataContextType | undefined>(undefined);
 
 export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { currentUser } = useAuth();
+  const { showToast } = useToast();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [goals, setGoals] = useState<GoalItem[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>([]);
@@ -308,11 +310,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setTransactions(prev => [newTx, ...prev]);
     setAuditLogs(prev => [newLog, ...prev]);
+    showToast(`${newTx.type === 'income' ? 'Receita' : 'Despesa'} adicionada: ${newTx.description}`);
     return newTx;
   };
 
-  // Update Transaction
-  const updateTransaction = async (id: string, txData: Partial<Transaction>): Promise<Transaction> => {
+  // Update Transaction — internal helper (no toast), shared by the public
+  // updateTransaction (edit form) and toggleTransactionStatus (which shows
+  // its own contextual message at the call site instead).
+  const applyTransactionUpdate = async (id: string, txData: Partial<Transaction>): Promise<Transaction> => {
     const now = new Date().toISOString();
     let updatedTx: Transaction | undefined;
 
@@ -391,6 +396,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return updatedTx;
   };
 
+  // Update Transaction (public — used by the edit form)
+  const updateTransaction = async (id: string, txData: Partial<Transaction>): Promise<Transaction> => {
+    const updated = await applyTransactionUpdate(id, txData);
+    showToast('Lançamento atualizado com sucesso');
+    return updated;
+  };
+
   // Delete Transaction
   const deleteTransaction = async (id: string): Promise<boolean> => {
     const tx = transactions.find(t => t.id === id);
@@ -440,16 +452,18 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         timestamp: now
       };
       setAuditLogs(prev => [newLog, ...prev]);
+      showToast(`Lançamento excluído: ${tx.description}`, { type: 'info' });
     }
     return true;
   };
 
-  // Toggle status paid / pending
+  // Toggle status paid / pending — no toast here; the calling screen shows
+  // its own contextual message (e.g. the Dashboard offers an "undo" action).
   const toggleTransactionStatus = async (id: string): Promise<void> => {
     const tx = transactions.find(t => t.id === id);
     if (!tx) return;
     const nextStatus = tx.status === 'paid' ? 'pending' : 'paid';
-    await updateTransaction(id, { status: nextStatus });
+    await applyTransactionUpdate(id, { status: nextStatus });
   };
 
   // Add Goal
@@ -545,11 +559,14 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     setGoals(prev => [newGoal, ...prev]);
     setAuditLogs(prev => [newLog, ...prev]);
+    showToast(`Novo desejo/meta cadastrado: ${newGoal.title}`);
     return newGoal;
   };
 
-  // Update Goal
-  const updateGoal = async (id: string, goalData: Partial<GoalItem>): Promise<GoalItem> => {
+  // Update Goal — internal helper (no toast), shared by the public updateGoal
+  // (edit form) and addGoalContribution/toggleGoalCompleted (which show their
+  // own contextual messages at the call site instead).
+  const applyGoalUpdate = async (id: string, goalData: Partial<GoalItem>): Promise<GoalItem> => {
     const now = new Date().toISOString();
     let updated: GoalItem | undefined;
 
@@ -603,6 +620,13 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return updated;
   };
 
+  // Update Goal (public — used by the edit form)
+  const updateGoal = async (id: string, goalData: Partial<GoalItem>): Promise<GoalItem> => {
+    const updated = await applyGoalUpdate(id, goalData);
+    showToast('Meta atualizada com sucesso');
+    return updated;
+  };
+
   // Delete Goal
   const deleteGoal = async (id: string): Promise<boolean> => {
     const goal = goals.find(g => g.id === id);
@@ -652,6 +676,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
         timestamp: now
       };
       setAuditLogs(prev => [newLog, ...prev]);
+      showToast(`Meta excluída: ${goal.title}`, { type: 'info' });
     }
     return true;
   };
@@ -684,7 +709,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
 
-    await updateGoal(goalId, {
+    await applyGoalUpdate(goalId, {
       currentAmount: newCurrent,
       contributions: [...(goal.contributions || []), newContribution],
       status: isNowComplete ? 'completed' : goal.status,
@@ -702,6 +727,11 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       timestamp: new Date().toISOString()
     };
     setAuditLogs(prev => [newLog, ...prev]);
+    showToast(
+      isNowComplete && goal.status !== 'completed'
+        ? `Meta '${goal.title}' concluída!`
+        : `Economia de R$ ${amount.toFixed(2)} adicionada à meta '${goal.title}'`
+    );
   };
 
   // Toggle Goal Completed / Wishlist acquired
@@ -722,11 +752,17 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
     }
 
-    await updateGoal(goalId, {
+    await applyGoalUpdate(goalId, {
       status: willBeComplete ? 'completed' : 'active',
       completedAt: willBeComplete ? new Date().toISOString() : undefined,
       currentAmount: willBeComplete ? Math.max(goal.currentAmount, goal.targetAmount) : goal.currentAmount
     });
+
+    showToast(
+      willBeComplete
+        ? `Meta '${goal.title}' marcada como adquirida/concluída!`
+        : `Meta '${goal.title}' reaberta`
+    );
   };
 
   // Simulate Google Spark Webhook Sync from the UI

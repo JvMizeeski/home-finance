@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -18,6 +19,7 @@ import {
   Check
 } from 'lucide-react';
 import { TabType } from './Navigation';
+import { Transaction } from '../types';
 
 interface DashboardTabProps {
   onOpenNewTransaction: () => void;
@@ -32,6 +34,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
 }) => {
   const { transactions, goals, selectedMonth, toggleTransactionStatus } = useData();
   const { currentUser } = useAuth();
+  const { showToast } = useToast();
 
   // Independent period filter for the "Upcoming Bills" card — always relative
   // to today, regardless of the global month/year selector above.
@@ -68,9 +71,17 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
     .filter(t => t.type === 'expense' && t.frequency === 'pontual')
     .reduce((acc, t) => acc + t.amount, 0);
 
-  const pendingExpenses = filteredTxs
-    .filter(t => t.type === 'expense' && t.status === 'pending');
-  
+  // "A Pagar" deliberately does NOT use filteredTxs (exact month match) —
+  // an unpaid bill due in a past month must keep counting as owed money in
+  // the current view instead of silently disappearing once the calendar
+  // rolls over to a new month ("esquecida").
+  const pendingExpenses = transactions.filter(t => {
+    if (t.type !== 'expense' || t.status !== 'pending') return false;
+    if (selectedMonth === 'all') return true;
+    const effectiveMonth = (t.dueDate || t.date).slice(0, 7);
+    return effectiveMonth <= selectedMonth;
+  });
+
   const totalPendingAmount = pendingExpenses.reduce((acc, t) => acc + t.amount, 0);
 
   // Group expenses by category
@@ -98,10 +109,23 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
       userExpenses[key] = (userExpenses[key] || 0) + t.amount;
     });
 
+  // Is this due date already in the past (and, since we only ever call this
+  // on pending items, still unpaid)? Overdue bills always surface below,
+  // regardless of the week/month/year tab, so they don't get forgotten.
+  const isOverdue = (dateStr: string) => {
+    const d = new Date(`${dateStr}T00:00:00`);
+    if (isNaN(d.getTime())) return false;
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    return d < startOfToday;
+  };
+
   // Upcoming bills card: pending expenses within the chosen period (week/month/year),
   // always relative to today — independent of the global month/year selector,
   // since this card is meant as a quick glance, not the detailed history view.
   const isWithinBillsPeriod = (dateStr: string) => {
+    if (isOverdue(dateStr)) return true;
+
     const d = new Date(`${dateStr}T00:00:00`);
     if (isNaN(d.getTime())) return false;
     const now = new Date();
@@ -130,6 +154,22 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
   const upcomingBills = [...periodPendingBills]
     .sort((a, b) => (a.dueDate || a.date).localeCompare(b.dueDate || b.date))
     .slice(0, 4);
+
+  // Marking a bill as paid from this card commits immediately, but offers a
+  // 5s "Desfazer" window — the item would otherwise just vanish from this
+  // short list with no way back.
+  const handleCheckBill = async (bill: Transaction) => {
+    await toggleTransactionStatus(bill.id);
+    showToast(`'${bill.description}' marcado como pago`, {
+      duration: 5000,
+      action: {
+        label: 'Desfazer',
+        onClick: () => {
+          toggleTransactionStatus(bill.id);
+        }
+      }
+    });
+  };
 
   // Highlight active goals
   const activeGoals = goals.filter(g => g.status === 'active').slice(0, 3);
@@ -287,14 +327,18 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
           </div>
         ) : (
           <div className="flex flex-col gap-2.5">
-            {upcomingBills.map((bill) => (
+            {upcomingBills.map((bill) => {
+              const overdue = isOverdue(bill.dueDate || bill.date);
+              return (
               <div
                 key={bill.id}
-                className="flex items-center justify-between p-3.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-xs"
+                className={`flex items-center justify-between p-3.5 rounded-xl border transition-all text-xs ${
+                  overdue ? 'border-rose-500/30 bg-rose-500/5 hover:bg-rose-500/10' : 'border-white/10 bg-white/5 hover:bg-white/10'
+                }`}
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <button
-                    onClick={() => toggleTransactionStatus(bill.id)}
+                    onClick={() => handleCheckBill(bill)}
                     title="Marcar como Pago"
                     className="w-6 h-6 rounded-lg border border-amber-400/40 bg-amber-500/10 hover:bg-emerald-500/20 hover:border-emerald-400 flex items-center justify-center transition-colors group shrink-0"
                   >
@@ -303,6 +347,12 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                   <div className="min-w-0">
                     <div className="font-semibold text-white truncate">{bill.description}</div>
                     <div className="text-[11px] text-slate-400 flex flex-wrap items-center gap-2 mt-0.5">
+                      {overdue && (
+                        <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded-sm bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold">
+                          <AlertTriangle className="w-2.5 h-2.5" />
+                          Atrasada
+                        </span>
+                      )}
                       <span className="inline-flex items-center px-1.5 py-0.2 rounded-sm bg-white/10 text-slate-300 border border-white/5">
                         {bill.category}
                       </span>
@@ -318,14 +368,15 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                     {formatBRL(bill.amount)}
                   </span>
                   <button
-                    onClick={() => toggleTransactionStatus(bill.id)}
+                    onClick={() => handleCheckBill(bill)}
                     className="px-2.5 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-medium rounded-lg border border-emerald-500/30 transition-colors"
                   >
                     Pagar
                   </button>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { Transaction, BillFrequency, TransactionType, TransactionStatus } from '../types';
 import { CATEGORIES } from '../lib/constants';
 import { 
@@ -36,10 +37,11 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
 }) => {
   const { transactions, selectedMonth, toggleTransactionStatus, deleteTransaction } = useData();
   const { currentUser } = useAuth();
+  const { showToast } = useToast();
 
   // Filters State
   const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState<'all' | TransactionType>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | TransactionType>('expense');
   const [freqFilter, setFreqFilter] = useState<'all' | BillFrequency>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | TransactionStatus>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -113,6 +115,17 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
     if (window.confirm(`Tem certeza que deseja excluir '${description}'? Esta ação registrará um log de auditoria.`)) {
       await deleteTransaction(id);
     }
+  };
+
+  const handleToggleStatus = async (tx: Transaction) => {
+    const willBePaid = tx.status !== 'paid';
+    await toggleTransactionStatus(tx.id);
+    showToast(
+      willBePaid
+        ? `'${tx.description}' marcado como ${tx.type === 'income' ? 'recebido' : 'pago'}`
+        : `'${tx.description}' marcado como pendente`,
+      { type: 'info' }
+    );
   };
 
   return (
@@ -326,7 +339,7 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
 
                   {/* Status Checkbox Button */}
                   <button
-                    onClick={() => toggleTransactionStatus(tx.id)}
+                    onClick={() => handleToggleStatus(tx)}
                     title={isPaid ? "Marcado como Pago (Clique para marcar como Pendente)" : "Pendente (Clique para marcar como Pago)"}
                     className={`mt-0.5 sm:mt-0 w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
                       isPaid 

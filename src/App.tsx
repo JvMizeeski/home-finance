@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { DataProvider, useData } from './context/DataContext';
 import { PinLockProvider, usePinLock } from './context/PinLockContext';
+import { ToastProvider } from './context/ToastContext';
 import { PinLockScreen } from './components/PinLockScreen';
 import { Header } from './components/Header';
 import { Sidebar } from './components/Sidebar';
@@ -166,11 +167,13 @@ function PinGate() {
   }
 
   return (
-    <AuthProvider>
-      <DataProvider>
-        <MainApp />
-      </DataProvider>
-    </AuthProvider>
+    <ToastProvider>
+      <AuthProvider>
+        <DataProvider>
+          <MainApp />
+        </DataProvider>
+      </AuthProvider>
+    </ToastProvider>
   );
 }
 

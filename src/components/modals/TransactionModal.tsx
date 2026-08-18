@@ -30,6 +30,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
   const [category, setCategory] = useState(DEFAULT_EXPENSE_CATEGORY);
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [dueDate, setDueDate] = useState(new Date().toISOString().slice(0, 10));
+  const [dueDay, setDueDay] = useState(String(new Date().getDate()));
   const [status, setStatus] = useState<TransactionStatus>('paid');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('pix');
   const [assignedTo, setAssignedTo] = useState('shared');
@@ -47,6 +48,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       setCategory(editingTransaction.category);
       setDate(editingTransaction.date);
       setDueDate(editingTransaction.dueDate || editingTransaction.date);
+      setDueDay(String(new Date(`${editingTransaction.dueDate || editingTransaction.date}T00:00:00`).getDate()));
       setStatus(editingTransaction.status);
       setPaymentMethod(editingTransaction.paymentMethod || 'pix');
       setAssignedTo(editingTransaction.assignedTo === 'Esposa' ? 'Rafaella' : (editingTransaction.assignedTo || 'shared'));
@@ -61,6 +63,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       setCategory(DEFAULT_EXPENSE_CATEGORY);
       setDate(new Date().toISOString().slice(0, 10));
       setDueDate(new Date().toISOString().slice(0, 10));
+      setDueDay(String(new Date().getDate()));
       setStatus('paid');
       setPaymentMethod('pix');
       setAssignedTo(currentUser.name === 'Rafaella' || currentUser.name === 'Esposa' ? 'Rafaella' : currentUser.name === 'João' ? 'João' : 'shared');
@@ -85,6 +88,11 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 
   const categoriesForType = CATEGORIES.filter(c => c.type === type || c.type === 'both');
 
+  // Contas fixas/recorrentes e parceladas já "existem" (não é preciso dizer
+  // quando foram lançadas) e vencem sempre no mesmo dia do mês — então em vez
+  // de pedir duas datas completas, pedimos só o dia do vencimento.
+  const isRecurring = type === 'expense' && (frequency === 'fixed' || frequency === 'installment');
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim() || !amount) {
@@ -98,6 +106,18 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       return;
     }
 
+    let finalDate = date;
+    let finalDueDate = type === 'income' ? date : (dueDate || date);
+
+    if (isRecurring) {
+      const now = new Date();
+      finalDate = now.toISOString().slice(0, 10);
+      const dayNum = Math.min(31, Math.max(1, parseInt(dueDay, 10) || 1));
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      finalDueDate = `${yyyy}-${mm}-${String(dayNum).padStart(2, '0')}`;
+    }
+
     setIsSubmitting(true);
     try {
       await onSave({
@@ -106,8 +126,8 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
         type,
         frequency,
         category,
-        date,
-        dueDate: type === 'income' ? date : (dueDate || date),
+        date: finalDate,
+        dueDate: finalDueDate,
         status,
         paymentMethod,
         assignedTo,
@@ -267,29 +287,50 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                     </div>
                   </div>
 
-                  {/* Dates (Lançamento & Vencimento) */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {/* Dates: pontual pede as duas datas; fixa/parcelada só
+                      precisa do dia do mês em que sempre vence. */}
+                  {isRecurring ? (
                     <div>
-                      <label className="block text-slate-300 font-semibold mb-1">Data do Lançamento</label>
+                      <label className="block text-slate-300 font-semibold mb-1">Dia do Vencimento (todo mês)</label>
                       <input
-                        type="date"
+                        type="number"
+                        min={1}
+                        max={31}
                         required
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white focus:outline-hidden backdrop-blur-md"
+                        value={dueDay}
+                        onChange={(e) => setDueDay(e.target.value)}
+                        className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white focus:outline-hidden backdrop-blur-md font-mono"
                       />
+                      <span className="text-[10px] text-slate-400 mt-1 block">
+                        {frequency === 'fixed'
+                          ? 'Conta fixa: vence sempre nesse dia, todos os meses.'
+                          : 'Parcela: vence nesse dia do mês atual.'}
+                      </span>
                     </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-slate-300 font-semibold mb-1">Data do Lançamento</label>
+                        <input
+                          type="date"
+                          required
+                          value={date}
+                          onChange={(e) => setDate(e.target.value)}
+                          className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white focus:outline-hidden backdrop-blur-md"
+                        />
+                      </div>
 
-                    <div>
-                      <label className="block text-slate-300 font-semibold mb-1">Data de Vencimento</label>
-                      <input
-                        type="date"
-                        value={dueDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                        className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white focus:outline-hidden backdrop-blur-md"
-                      />
+                      <div>
+                        <label className="block text-slate-300 font-semibold mb-1">Data de Vencimento</label>
+                        <input
+                          type="date"
+                          value={dueDate}
+                          onChange={(e) => setDueDate(e.target.value)}
+                          className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white focus:outline-hidden backdrop-blur-md"
+                        />
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </>
               ) : (
                 /* Categoria & Data do Recebimento (receitas não têm vencimento) */
