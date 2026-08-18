@@ -6,12 +6,12 @@ export type PaymentMethod = 'pix' | 'credit_card' | 'debit_card' | 'cash' | 'tra
 
 export type TransactionStatus = 'paid' | 'pending';
 
-export type GoalCategory = 'home' | 'personal_husband' | 'personal_wife' | 'travel' | 'emergency' | 'tech' | 'other';
+export type GoalCategory = 'home' | 'personal_joao' | 'personal_rafaella' | 'travel' | 'emergency' | 'tech' | 'other';
 
 export interface UserProfile {
   id: string;
   name: string;
-  role: 'husband' | 'wife' | 'custom';
+  role?: string;
   avatarColor: string;
   email?: string;
 }
@@ -27,7 +27,7 @@ export interface Transaction {
   dueDate: string; // YYYY-MM-DD
   status: TransactionStatus;
   paymentMethod: PaymentMethod;
-  assignedTo: string; // 'João', 'Esposa', 'shared'
+  assignedTo: string; // 'João', 'Rafaella', 'shared'
   source: 'manual' | 'google_spark' | 'supabase_sync' | 'import';
   notes?: string;
   receiptUrl?: string;

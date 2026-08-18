@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Transaction, TransactionType, BillFrequency, TransactionStatus, PaymentMethod } from '../../types';
 import { CATEGORIES, PAYMENT_METHODS } from '../../lib/constants';
 import { useAuth } from '../../context/AuthContext';
-import { X, Calendar, DollarSign, Tag, User, CreditCard, FileText } from 'lucide-react';
+import { X, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -44,7 +44,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       setDueDate(editingTransaction.dueDate || editingTransaction.date);
       setStatus(editingTransaction.status);
       setPaymentMethod(editingTransaction.paymentMethod || 'pix');
-      setAssignedTo(editingTransaction.assignedTo || 'shared');
+      setAssignedTo(editingTransaction.assignedTo === 'Esposa' ? 'Rafaella' : (editingTransaction.assignedTo || 'shared'));
       setNotes(editingTransaction.notes || '');
       setReceiptUrl(editingTransaction.receiptUrl || '');
     } else {
@@ -57,7 +57,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
       setDueDate(new Date().toISOString().slice(0, 10));
       setStatus('paid');
       setPaymentMethod('pix');
-      setAssignedTo(currentUser.name === 'Esposa' ? 'Esposa' : currentUser.name === 'João' ? 'João' : 'shared');
+      setAssignedTo(currentUser.name === 'Rafaella' || currentUser.name === 'Esposa' ? 'Rafaella' : currentUser.name === 'João' ? 'João' : 'shared');
       setNotes('');
       setReceiptUrl('');
     }
@@ -105,7 +105,7 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-150">
-      <div className="bg-slate-900/90 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-white/15 max-h-[90vh] overflow-y-auto backdrop-blur-xl text-slate-100">
+      <div className="bg-slate-900/95 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-white/15 max-h-[90vh] overflow-y-auto backdrop-blur-xl text-slate-100">
         
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
@@ -134,24 +134,26 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
               <button
                 type="button"
                 onClick={() => setType('expense')}
-                className={`py-2.5 px-3 rounded-xl font-bold transition-all ${
+                className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl font-bold transition-all ${
                   type === 'expense'
                     ? 'bg-rose-500/20 text-rose-300 border-2 border-rose-500 shadow-md shadow-rose-950/40'
                     : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
                 }`}
               >
-                💸 Despesa (Gasto)
+                <ArrowDownRight className="w-4 h-4 text-rose-400" />
+                <span>Despesa (Gasto)</span>
               </button>
               <button
                 type="button"
                 onClick={() => setType('income')}
-                className={`py-2.5 px-3 rounded-xl font-bold transition-all ${
+                className={`flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl font-bold transition-all ${
                   type === 'income'
                     ? 'bg-emerald-500/20 text-emerald-300 border-2 border-emerald-500 shadow-md shadow-emerald-950/40'
                     : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
                 }`}
               >
-                💰 Receita (Ganho)
+                <ArrowUpRight className="w-4 h-4 text-emerald-400" />
+                <span>Receita (Ganho)</span>
               </button>
             </div>
           </div>
@@ -193,9 +195,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                 onChange={(e) => setFrequency(e.target.value as BillFrequency)}
                 className="w-full px-3 py-2.5 bg-slate-900 border border-white/10 rounded-xl text-xs sm:text-sm text-slate-200 focus:outline-hidden [&>option]:bg-slate-900 [&>option]:text-slate-100"
               >
-                <option value="pontual">⚡ Gasto Pontual (Eventual)</option>
-                <option value="fixed">📌 Conta Fixa Mensal (Recorrente)</option>
-                <option value="installment">💳 Parcelado</option>
+                <option value="pontual">Gasto Pontual (Eventual)</option>
+                <option value="fixed">Conta Fixa Mensal (Recorrente)</option>
+                <option value="installment">Parcelado</option>
               </select>
             </div>
 
@@ -246,8 +248,8 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                 onChange={(e) => setStatus(e.target.value as TransactionStatus)}
                 className="w-full px-3 py-2.5 bg-slate-900 border border-white/10 rounded-xl text-xs sm:text-sm text-slate-200 focus:outline-hidden [&>option]:bg-slate-900 [&>option]:text-slate-100"
               >
-                <option value="paid">✅ Pago / Recebido</option>
-                <option value="pending">⏳ Pendente (A Pagar)</option>
+                <option value="paid">Pago / Recebido</option>
+                <option value="pending">Pendente (A Pagar)</option>
               </select>
             </div>
 
@@ -258,9 +260,9 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                 onChange={(e) => setAssignedTo(e.target.value)}
                 className="w-full px-3 py-2.5 bg-slate-900 border border-white/10 rounded-xl text-xs sm:text-sm text-slate-200 focus:outline-hidden [&>option]:bg-slate-900 [&>option]:text-slate-100"
               >
-                <option value="shared">👫 Casal (Compartilhado)</option>
-                <option value="João">👨 João</option>
-                <option value="Esposa">👩 Esposa</option>
+                <option value="shared">Casal (Compartilhado)</option>
+                <option value="João">João</option>
+                <option value="Rafaella">Rafaella</option>
               </select>
             </div>
           </div>
@@ -277,18 +279,6 @@ export const TransactionModal: React.FC<TransactionModalProps> = ({
                 <option key={p.id} value={p.id}>{p.label}</option>
               ))}
             </select>
-          </div>
-
-          {/* Notes */}
-          <div>
-            <label className="block text-slate-300 font-semibold mb-1">Anotações / Observações (Opcional)</label>
-            <input
-              type="text"
-              placeholder="Ex: Parcela 2/5, Pago no cartão Nubank"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              className="w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-xs sm:text-sm text-white focus:outline-hidden placeholder:text-slate-500 backdrop-blur-md"
-            />
           </div>
 
           {/* Footer Actions */}

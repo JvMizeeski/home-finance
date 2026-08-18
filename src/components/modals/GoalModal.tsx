@@ -91,7 +91,7 @@ export const GoalModal: React.FC<GoalModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-150">
-      <div className="bg-slate-900/90 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-white/15 max-h-[90vh] overflow-y-auto backdrop-blur-xl text-slate-100">
+      <div className="bg-slate-900/95 rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-white/15 max-h-[90vh] overflow-y-auto backdrop-blur-xl text-slate-100">
         
         <div className="flex items-center justify-between pb-4 border-b border-white/10">
           <div>
@@ -99,7 +99,7 @@ export const GoalModal: React.FC<GoalModalProps> = ({
               {editingGoal ? 'Editar Desejo / Meta' : 'Novo Desejo / Meta de Compra'}
             </h3>
             <p className="text-xs text-slate-400">
-              Cadastre itens para o lar ou planos pessoais de João & Esposa
+              Cadastre itens para o lar ou planos pessoais de João & Rafaella
             </p>
           </div>
           <button
@@ -175,9 +175,9 @@ export const GoalModal: React.FC<GoalModalProps> = ({
                 onChange={(e) => setPriority(e.target.value as any)}
                 className="w-full px-3 py-2.5 bg-slate-900 border border-white/10 rounded-xl text-xs sm:text-sm text-slate-200 focus:outline-hidden [&>option]:bg-slate-900 [&>option]:text-slate-100"
               >
-                <option value="high">🔴 Alta Prioridade</option>
-                <option value="medium">🟡 Média Prioridade</option>
-                <option value="low">🟢 Baixa Prioridade</option>
+                <option value="high">Alta Prioridade</option>
+                <option value="medium">Média Prioridade</option>
+                <option value="low">Baixa Prioridade</option>
               </select>
             </div>
           </div>

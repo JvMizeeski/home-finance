@@ -1,8 +1,8 @@
 import { CategoryInfo, UserProfile } from '../types';
 
 export const DEFAULT_USERS: UserProfile[] = [
-  { id: "u_joao", name: "João", role: "husband", avatarColor: "bg-blue-600", email: "joao@email.com" },
-  { id: "u_esposa", name: "Esposa", role: "wife", avatarColor: "bg-rose-500", email: "esposa@email.com" }
+  { id: "u_joao", name: "João", avatarColor: "bg-blue-600", email: "joao@email.com" },
+  { id: "u_rafaella", name: "Rafaella", avatarColor: "bg-rose-500", email: "rafaella@email.com" }
 ];
 
 export const CATEGORIES: CategoryInfo[] = [
@@ -33,8 +33,8 @@ export const PAYMENT_METHODS = [
 
 export const GOAL_CATEGORIES = [
   { id: "home", label: "Casa & Móveis", icon: "Home", color: "bg-indigo-100 text-indigo-800" },
-  { id: "personal_husband", label: "Pessoal (João)", icon: "User", color: "bg-blue-100 text-blue-800" },
-  { id: "personal_wife", label: "Pessoal (Esposa)", icon: "UserCheck", color: "bg-rose-100 text-rose-800" },
+  { id: "personal_joao", label: "Pessoal (João)", icon: "User", color: "bg-blue-100 text-blue-800" },
+  { id: "personal_rafaella", label: "Pessoal (Rafaella)", icon: "UserCheck", color: "bg-rose-100 text-rose-800" },
   { id: "travel", label: "Viagem & Férias", icon: "Plane", color: "bg-amber-100 text-amber-800" },
   { id: "emergency", label: "Reserva de Emergência", icon: "ShieldCheck", color: "bg-emerald-100 text-emerald-800" },
   { id: "tech", label: "Eletrônicos & Tech", icon: "Laptop", color: "bg-purple-100 text-purple-800" },

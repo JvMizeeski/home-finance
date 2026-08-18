@@ -3,7 +3,6 @@ import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { 
   History, 
-  Users, 
   Sparkles, 
   PlusCircle, 
   Edit3, 
@@ -22,7 +21,13 @@ export const AuditLogsTab: React.FC = () => {
   const [selectedActionFilter, setSelectedActionFilter] = useState<string>('all');
 
   const filteredLogs = auditLogs.filter(log => {
-    if (selectedUserFilter !== 'all' && log.userName !== selectedUserFilter) return false;
+    if (selectedUserFilter !== 'all') {
+      if (selectedUserFilter === 'Rafaella') {
+        if (log.userName !== 'Rafaella' && log.userName !== 'Esposa') return false;
+      } else if (log.userName !== selectedUserFilter) {
+        return false;
+      }
+    }
     if (selectedActionFilter !== 'all' && log.action !== selectedActionFilter) return false;
     return true;
   });
@@ -71,7 +76,7 @@ export const AuditLogsTab: React.FC = () => {
           <div>
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20 backdrop-blur-md">
-                Auditoria & Histórico do Casal
+                Auditoria & Histórico de Atividades
               </span>
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-white mt-1">
@@ -100,9 +105,9 @@ export const AuditLogsTab: React.FC = () => {
             onChange={(e) => setSelectedUserFilter(e.target.value)}
             className="bg-slate-950/80 border border-white/10 text-slate-200 px-3 py-2 rounded-lg font-medium focus:outline-hidden [&>option]:bg-slate-900 [&>option]:text-slate-100"
           >
-            <option value="all">👤 Todos os Usuários & Fontes</option>
+            <option value="all">Todos os Usuários & Fontes</option>
             <option value="João">João</option>
-            <option value="Esposa">Esposa</option>
+            <option value="Rafaella">Rafaella</option>
             <option value="Google Spark (Planilha)">Google Spark (Planilha)</option>
           </select>
 
@@ -112,7 +117,7 @@ export const AuditLogsTab: React.FC = () => {
             onChange={(e) => setSelectedActionFilter(e.target.value)}
             className="bg-slate-950/80 border border-white/10 text-slate-200 px-3 py-2 rounded-lg font-medium focus:outline-hidden [&>option]:bg-slate-900 [&>option]:text-slate-100"
           >
-            <option value="all">⚡ Todas as Ações</option>
+            <option value="all">Todas as Ações</option>
             <option value="create">Novos Cadastros</option>
             <option value="update">Edições / Alterações</option>
             <option value="delete">Exclusões</option>
@@ -160,7 +165,9 @@ export const AuditLogsTab: React.FC = () => {
 
                   <div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-bold text-white text-sm">{log.userName}</span>
+                      <span className="font-bold text-white text-sm">
+                        {log.userName === 'Esposa' ? 'Rafaella' : log.userName}
+                      </span>
                       
                       <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold border ${badge.color}`}>
                         <BadgeIcon className="w-3 h-3" />

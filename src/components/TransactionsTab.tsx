@@ -20,7 +20,9 @@ import {
   CreditCard,
   User,
   SlidersHorizontal,
-  X
+  X,
+  Pin,
+  Zap
 } from 'lucide-react';
 
 interface TransactionsTabProps {
@@ -78,7 +80,7 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
       // Assigned To
       if (assignedFilter !== 'all') {
         if (assignedFilter === 'João' && tx.assignedTo !== 'João') return false;
-        if (assignedFilter === 'Esposa' && tx.assignedTo !== 'Esposa') return false;
+        if (assignedFilter === 'Rafaella' && tx.assignedTo !== 'Rafaella' && tx.assignedTo !== 'Esposa') return false;
         if (assignedFilter === 'shared' && tx.assignedTo !== 'shared' && tx.assignedTo !== 'Casal') return false;
       }
 
@@ -117,7 +119,7 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
     <div className="space-y-5 pb-16">
       
       {/* Top Action & Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="flex items-center justify-between gap-3">
         <div className="relative flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -138,26 +140,15 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowFiltersMobile(!showFiltersMobile)}
-            className={`sm:hidden flex items-center gap-1.5 px-3 py-2.5 border rounded-xl text-xs font-medium backdrop-blur-md transition-colors ${
-              showFiltersMobile ? 'bg-blue-600 text-white border-blue-500' : 'bg-white/5 text-slate-300 border-white/10'
-            }`}
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            Filtros
-          </button>
-
-          <button
-            id="tx-add-btn"
-            onClick={onOpenNewTransaction}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold rounded-xl shadow-lg shadow-blue-900/30 transition-all active:scale-95"
-          >
-            <Plus className="w-4 h-4" />
-            Novo Lançamento
-          </button>
-        </div>
+        <button
+          onClick={() => setShowFiltersMobile(!showFiltersMobile)}
+          className={`sm:hidden flex items-center gap-1.5 px-3 py-2.5 border rounded-xl text-xs font-medium backdrop-blur-md transition-colors ${
+            showFiltersMobile ? 'bg-blue-600 text-white border-blue-500' : 'bg-white/5 text-slate-300 border-white/10'
+          }`}
+        >
+          <SlidersHorizontal className="w-3.5 h-3.5" />
+          Filtros
+        </button>
       </div>
 
       {/* Filter Row (Desktop Always, Mobile Toggleable) */}
@@ -196,15 +187,17 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
             </button>
             <button
               onClick={() => setFreqFilter('fixed')}
-              className={`px-3 py-1 rounded-lg transition-all ${freqFilter === 'fixed' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 font-semibold shadow-xs' : 'text-slate-400 hover:text-white'}`}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg transition-all ${freqFilter === 'fixed' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30 font-semibold shadow-xs' : 'text-slate-400 hover:text-white'}`}
             >
-              📌 Contas Fixas
+              <Pin className="w-3 h-3" />
+              Contas Fixas
             </button>
             <button
               onClick={() => setFreqFilter('pontual')}
-              className={`px-3 py-1 rounded-lg transition-all ${freqFilter === 'pontual' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold shadow-xs' : 'text-slate-400 hover:text-white'}`}
+              className={`flex items-center gap-1 px-3 py-1 rounded-lg transition-all ${freqFilter === 'pontual' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold shadow-xs' : 'text-slate-400 hover:text-white'}`}
             >
-              ⚡ Pontuais
+              <Zap className="w-3 h-3" />
+              Pontuais
             </button>
           </div>
 
@@ -236,9 +229,9 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
             onChange={(e) => setAssignedFilter(e.target.value)}
             className="bg-slate-900/60 border border-white/10 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-medium focus:outline-hidden [&>option]:bg-slate-900 [&>option]:text-slate-100"
           >
-            <option value="all">👤 Responsável: Todos</option>
+            <option value="all">Responsável: Todos</option>
             <option value="João">João</option>
-            <option value="Esposa">Esposa</option>
+            <option value="Rafaella">Rafaella</option>
             <option value="shared">Casal (Compartilhado)</option>
           </select>
 
@@ -248,7 +241,7 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
             onChange={(e) => setCategoryFilter(e.target.value)}
             className="bg-slate-900/60 border border-white/10 text-slate-200 px-3 py-1.5 rounded-xl text-xs font-medium focus:outline-hidden [&>option]:bg-slate-900 [&>option]:text-slate-100"
           >
-            <option value="all">🏷️ Categoria: Todas</option>
+            <option value="all">Categoria: Todas</option>
             {CATEGORIES.map(c => (
               <option key={c.name} value={c.name}>{c.name}</option>
             ))}
@@ -350,8 +343,9 @@ export const TransactionsTab: React.FC<TransactionsTabProps> = ({
                       
                       {/* Fixed vs Pontual Badge */}
                       {isFixed ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
-                          📌 Fixa Mensal
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-blue-500/20 text-blue-300 border border-blue-500/30">
+                          <Pin className="w-2.5 h-2.5" />
+                          Fixa Mensal
                         </span>
                       ) : (
                         <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-semibold bg-white/10 text-slate-300">

@@ -295,7 +295,7 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
                     {isCompleted && (
                       <div className="mt-2 text-[11px] text-emerald-300 bg-emerald-500/20 border border-emerald-500/30 font-semibold p-2 rounded-xl text-center flex items-center justify-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                        Item Adquirido / Concluído! 🎉
+                        Item Adquirido / Concluído
                       </div>
                     )}
                   </div>

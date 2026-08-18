@@ -10,8 +10,8 @@ app.use(express.json());
 // In-memory persistent state (with initial seed data for demo)
 let dbState = {
   users: [
-    { id: "u_joao", name: "João", role: "husband", avatarColor: "bg-blue-600", email: "joao@email.com" },
-    { id: "u_esposa", name: "Esposa", role: "wife", avatarColor: "bg-rose-500", email: "esposa@email.com" }
+    { id: "u_joao", name: "João", avatarColor: "bg-blue-600", email: "joao@email.com" },
+    { id: "u_rafaella", name: "Rafaella", avatarColor: "bg-rose-500", email: "rafaella@email.com" }
   ],
   transactions: [
     {
@@ -34,7 +34,7 @@ let dbState = {
     },
     {
       id: "tx_2",
-      description: "Salário Esposa",
+      description: "Salário Rafaella",
       amount: 5800.00,
       type: "income",
       frequency: "fixed",
@@ -43,12 +43,12 @@ let dbState = {
       dueDate: new Date().toISOString().slice(0, 7) + "-05",
       status: "paid",
       paymentMethod: "transfer",
-      assignedTo: "Esposa",
+      assignedTo: "Rafaella",
       source: "manual",
       notes: "Salário mensal",
       createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
       updatedAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-      createdBy: "Esposa"
+      createdBy: "Rafaella"
     },
     {
       id: "tx_3",
@@ -88,7 +88,7 @@ let dbState = {
     },
     {
       id: "tx_5",
-      description: "Energia Elétrica (Enel)",
+      description: "Energia Elétrica",
       amount: 235.40,
       type: "expense",
       frequency: "fixed",
@@ -102,7 +102,7 @@ let dbState = {
       notes: "Vence dia 20",
       createdAt: new Date(Date.now() - 86400000).toISOString(),
       updatedAt: new Date(Date.now() - 86400000).toISOString(),
-      createdBy: "Esposa"
+      createdBy: "Rafaella"
     },
     {
       id: "tx_6",
@@ -128,17 +128,17 @@ let dbState = {
       amount: 190.00,
       type: "expense",
       frequency: "pontual",
-      category: "Lazer",
+      category: "Lazer & Viagem",
       date: new Date().toISOString().slice(0, 7) + "-12",
       dueDate: new Date().toISOString().slice(0, 7) + "-12",
       status: "paid",
       paymentMethod: "credit_card",
       assignedTo: "shared",
       source: "manual",
-      notes: "Aniversário de namoro",
+      notes: "Jantar comemorativo",
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      createdBy: "Esposa"
+      createdBy: "Rafaella"
     }
   ],
   goals: [
@@ -155,10 +155,10 @@ let dbState = {
       notes: "Modelo 3 lugares em tecido suede cinza",
       contributions: [
         { id: "c1", amount: 1200, date: "2026-06-01", user: "João", notes: "Economia do bônus" },
-        { id: "c2", amount: 1200, date: "2026-07-01", user: "Esposa", notes: "Aporte mensal" }
+        { id: "c2", amount: 1200, date: "2026-07-01", user: "Rafaella", notes: "Aporte mensal" }
       ],
       createdAt: new Date(Date.now() - 86400000 * 30).toISOString(),
-      createdBy: "Esposa"
+      createdBy: "Rafaella"
     },
     {
       id: "goal_2",
@@ -170,7 +170,7 @@ let dbState = {
       status: "completed",
       priority: "medium",
       targetDate: "2026-07-20",
-      notes: "Comprada na promoção!",
+      notes: "Comprada na promoção",
       contributions: [
         { id: "c3", amount: 480, date: "2026-07-15", user: "João", notes: "Comprada e entregue" }
       ],
@@ -191,7 +191,7 @@ let dbState = {
       notes: "Meta de 6 meses de gastos fixos guardados no Tesouro Selic",
       contributions: [
         { id: "c4", amount: 10000, date: "2026-01-10", user: "João", notes: "Saldo inicial" },
-        { id: "c5", amount: 6500, date: "2026-07-05", user: "Esposa", notes: "Aporte conjunto" }
+        { id: "c5", amount: 6500, date: "2026-07-05", user: "Rafaella", notes: "Aporte conjunto" }
       ],
       createdAt: new Date(Date.now() - 86400000 * 90).toISOString(),
       createdBy: "João"
@@ -201,7 +201,7 @@ let dbState = {
       title: "Cafeteira Espresso Automática",
       targetAmount: 950.00,
       currentAmount: 350.00,
-      category: "personal_husband",
+      category: "personal_joao",
       purchaseUrl: "https://www.amazon.com.br",
       status: "active",
       priority: "low",
@@ -232,7 +232,7 @@ let dbState = {
       action: "goal_complete",
       userName: "João",
       userAvatar: "bg-blue-600",
-      details: "Marcou a meta 'Air Fryer Grande 5.5L' como Adquirida / Concluída!",
+      details: "Marcou a meta 'Air Fryer Grande 5.5L' como Adquirida / Concluída",
       timestamp: new Date(Date.now() - 86400000 * 10).toISOString()
     },
     {
@@ -240,9 +240,9 @@ let dbState = {
       entityType: "transaction",
       entityId: "tx_5",
       action: "create",
-      userName: "Esposa",
+      userName: "Rafaella",
       userAvatar: "bg-rose-500",
-      details: "Cadastrou conta fixa 'Energia Elétrica (Enel)' de R$ 235,40",
+      details: "Cadastrou conta fixa 'Energia Elétrica' de R$ 235,40",
       timestamp: new Date(Date.now() - 86400000).toISOString()
     }
   ]
@@ -299,7 +299,7 @@ app.post("/api/transactions", (req, res) => {
     entityId: newTx.id,
     action: "create",
     userName: newTx.createdBy,
-    userAvatar: newTx.createdBy === "Esposa" ? "bg-rose-500" : newTx.createdBy === "João" ? "bg-blue-600" : "bg-emerald-600",
+    userAvatar: newTx.createdBy === "Rafaella" ? "bg-rose-500" : newTx.createdBy === "João" ? "bg-blue-600" : "bg-emerald-600",
     details: `Adicionou ${newTx.type === "income" ? "receita" : "despesa"} '${newTx.description}' de R$ ${newTx.amount.toFixed(2)} (${newTx.frequency})`,
     timestamp: new Date().toISOString()
   };
@@ -334,7 +334,7 @@ app.put("/api/transactions/:id", (req, res) => {
     entityId: id,
     action: "update",
     userName: user,
-    userAvatar: user === "Esposa" ? "bg-rose-500" : user === "João" ? "bg-blue-600" : "bg-indigo-600",
+    userAvatar: user === "Rafaella" ? "bg-rose-500" : user === "João" ? "bg-blue-600" : "bg-indigo-600",
     details: `Editou transação '${updatedTx.description}' para R$ ${updatedTx.amount.toFixed(2)} (Status: ${updatedTx.status})`,
     timestamp: new Date().toISOString()
   };
@@ -361,7 +361,7 @@ app.delete("/api/transactions/:id", (req, res) => {
     entityId: id,
     action: "delete",
     userName: user,
-    userAvatar: user === "Esposa" ? "bg-rose-500" : user === "João" ? "bg-blue-600" : "bg-gray-600",
+    userAvatar: user === "Rafaella" ? "bg-rose-500" : user === "João" ? "bg-blue-600" : "bg-gray-600",
     details: `Excluiu a transação '${tx.description}' de R$ ${tx.amount.toFixed(2)}`,
     timestamp: new Date().toISOString()
   };
@@ -401,7 +401,7 @@ app.post("/api/goals", (req, res) => {
     entityId: newGoal.id,
     action: "create",
     userName: newGoal.createdBy,
-    userAvatar: newGoal.createdBy === "Esposa" ? "bg-rose-500" : newGoal.createdBy === "João" ? "bg-blue-600" : "bg-emerald-600",
+    userAvatar: newGoal.createdBy === "Rafaella" ? "bg-rose-500" : newGoal.createdBy === "João" ? "bg-blue-600" : "bg-emerald-600",
     details: `Criou o objetivo/desejo '${newGoal.title}' (Meta: R$ ${newGoal.targetAmount.toFixed(2)})`,
     timestamp: new Date().toISOString()
   };
@@ -433,9 +433,9 @@ app.put("/api/goals/:id", (req, res) => {
     entityId: id,
     action: updatedGoal.status === "completed" && oldGoal.status !== "completed" ? "goal_complete" : "update",
     userName: user,
-    userAvatar: user === "Esposa" ? "bg-rose-500" : user === "João" ? "bg-blue-600" : "bg-indigo-600",
+    userAvatar: user === "Rafaella" ? "bg-rose-500" : user === "João" ? "bg-blue-600" : "bg-indigo-600",
     details: updatedGoal.status === "completed" && oldGoal.status !== "completed"
-      ? `Marcou o objetivo '${updatedGoal.title}' como Adquirido / Concluído! 🎉`
+      ? `Marcou o objetivo '${updatedGoal.title}' como Adquirido / Concluído`
       : `Atualizou o objetivo '${updatedGoal.title}' (Progresso: R$ ${updatedGoal.currentAmount.toFixed(2)} de R$ ${updatedGoal.targetAmount.toFixed(2)})`,
     timestamp: new Date().toISOString()
   };
@@ -461,7 +461,7 @@ app.delete("/api/goals/:id", (req, res) => {
     entityId: id,
     action: "delete",
     userName: user,
-    userAvatar: user === "Esposa" ? "bg-rose-500" : user === "João" ? "bg-blue-600" : "bg-gray-600",
+    userAvatar: user === "Rafaella" ? "bg-rose-500" : user === "João" ? "bg-blue-600" : "bg-gray-600",
     details: `Excluiu o objetivo '${goal.title}'`,
     timestamp: new Date().toISOString()
   };
@@ -473,6 +473,51 @@ app.delete("/api/goals/:id", (req, res) => {
 // Audit Logs
 app.get("/api/logs", (req, res) => {
   res.json(dbState.auditLogs);
+});
+
+// Supabase Configuration Persistence (Get and Save)
+let persistedSupabaseConfig = {
+  url: process.env.SUPABASE_URL || "https://sicwxjvlxkjmzddzqkmi.supabase.co",
+  anonKey: process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpY3d4anZseGtqbXpkZHpxa21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5OTY4OTYsImV4cCI6MjEwMjU3Mjg5Nn0.HEnyJOZr7C9hyZAD2M1Ze0PqA-LHn9fXHLlEhU4WbXQ"
+};
+
+app.get("/api/config/supabase", (req, res) => {
+  res.json(persistedSupabaseConfig);
+});
+
+app.post("/api/config/supabase", (req, res) => {
+  const { url, anonKey } = req.body;
+  persistedSupabaseConfig = {
+    url: url || "",
+    anonKey: anonKey || ""
+  };
+  res.json({ success: true, config: persistedSupabaseConfig });
+});
+
+// Reset / Wipe All Database Rows
+app.post("/api/reset", (req, res) => {
+  const user = req.body.user || "Usuário";
+  dbState.transactions = [];
+  dbState.goals = [];
+  dbState.auditLogs = [
+    {
+      id: `log_${Date.now()}`,
+      entityType: "system",
+      action: "delete",
+      userName: user,
+      userAvatar: "bg-rose-600",
+      details: "Zerou todas as linhas e registros do banco de dados",
+      timestamp: new Date().toISOString()
+    }
+  ];
+
+  res.json({
+    success: true,
+    message: "Todas as tabelas foram zeradas com sucesso.",
+    transactions: [],
+    goals: [],
+    auditLogs: dbState.auditLogs
+  });
 });
 
 // ==========================================

@@ -1,11 +1,31 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Transaction, GoalItem, AuditLog } from '../types';
 
+export const DEFAULT_SUPABASE_URL = "https://sicwxjvlxkjmzddzqkmi.supabase.co";
+export const DEFAULT_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpY3d4anZseGtqbXpkZHpxa21pIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5OTY4OTYsImV4cCI6MjEwMjU3Mjg5Nn0.HEnyJOZr7C9hyZAD2M1Ze0PqA-LHn9fXHLlEhU4WbXQ";
+
 let supabaseInstance: SupabaseClient | null = null;
 
+// Clean & normalize Supabase URL
+export const normalizeSupabaseUrl = (rawUrl: string): string => {
+  if (!rawUrl) return DEFAULT_SUPABASE_URL;
+  let clean = rawUrl.trim();
+  const dashboardMatch = clean.match(/project\/([a-z0-9]+)/i);
+  if (dashboardMatch && dashboardMatch[1]) {
+    return `https://${dashboardMatch[1]}.supabase.co`;
+  }
+  clean = clean.replace(/\/rest\/v1\/?$/i, '');
+  clean = clean.replace(/\/auth\/v1\/?$/i, '');
+  clean = clean.replace(/\/+$/, '');
+  if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
+    clean = `https://${clean}`;
+  }
+  return clean;
+};
+
 export function getSupabase(url?: string, anonKey?: string): SupabaseClient | null {
-  const finalUrl = url || localStorage.getItem('supabase_url') || (import.meta as any).env?.VITE_SUPABASE_URL || '';
-  const finalKey = anonKey || localStorage.getItem('supabase_anon_key') || (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '';
+  const finalUrl = normalizeSupabaseUrl(url || localStorage.getItem('supabase_url') || (import.meta as any).env?.VITE_SUPABASE_URL || DEFAULT_SUPABASE_URL);
+  const finalKey = (anonKey || localStorage.getItem('supabase_anon_key') || (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY).trim();
 
   if (!finalUrl || !finalKey) {
     return null;
@@ -24,10 +44,12 @@ export function getSupabase(url?: string, anonKey?: string): SupabaseClient | nu
 
 export function resetSupabaseClient(url: string, anonKey: string): SupabaseClient | null {
   try {
-    if (url && anonKey) {
-      supabaseInstance = createClient(url, anonKey);
-      localStorage.setItem('supabase_url', url);
-      localStorage.setItem('supabase_anon_key', anonKey);
+    const finalUrl = normalizeSupabaseUrl(url);
+    const finalKey = anonKey.trim();
+    if (finalUrl && finalKey) {
+      supabaseInstance = createClient(finalUrl, finalKey);
+      localStorage.setItem('supabase_url', finalUrl);
+      localStorage.setItem('supabase_anon_key', finalKey);
       return supabaseInstance;
     } else {
       supabaseInstance = null;
@@ -112,7 +134,7 @@ CREATE TABLE IF NOT EXISTS public.goals (
     completed_at TIMESTAMP WITH TIME ZONE
 );
 
--- 3. Tabela de Histórico e Auditoria de Ações (Logs de João & Esposa)
+-- 3. Tabela de Histórico e Auditoria de Ações (Logs de João & Rafaella)
 CREATE TABLE IF NOT EXISTS public.audit_logs (
     id TEXT PRIMARY KEY,
     entity_type TEXT NOT NULL,

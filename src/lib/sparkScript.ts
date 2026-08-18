@@ -1,17 +1,17 @@
 export const GOOGLE_APPS_SCRIPT_CODE = `/**
  * =========================================================================
- * GOOGLE APPS SCRIPT: FINANCASAL - SINCRONIZADOR AUTOMÁTICO DE PLANILHAS
+ * GOOGLE APPS SCRIPT: HOME FINANCE - SINCRONIZADOR AUTOMÁTICO DE PLANILHAS
  * =========================================================================
  * Instruções de Instalação:
  * 1. Na sua Planilha Google, vá em: Extensões > Apps Script
  * 2. Apague o código padrão e cole todo este arquivo.
  * 3. Altere a variável APP_API_URL abaixo com a URL da sua aplicação.
  * 4. Salve (Ctrl + S) e clique em "Executar" para autorizar.
- * 5. Volte para a planilha: Um menu "⚡ FinanCasal" aparecerá no topo!
+ * 5. Volte para a planilha: O menu "Home Finance" aparecerá no topo!
  */
 
-// URL do aplicativo FinanCasal (substitua pela sua URL da Cloud Run ou seu domínio)
-const APP_API_URL = "https://SEU_APP_FINANCASAL.run.app/api/sync/spark";
+// URL do aplicativo Home Finance (substitua pela sua URL da Cloud Run ou seu domínio)
+const APP_API_URL = "https://SEU_APP_HOME_FINANCE.run.app/api/sync/spark";
 
 // Token de segurança opcional configurado no .env
 const SYNC_TOKEN = "minha_chave_secreta_spark";
@@ -21,7 +21,7 @@ const SYNC_TOKEN = "minha_chave_secreta_spark";
  */
 function onOpen() {
   const ui = SpreadsheetApp.getUi();
-  ui.createMenu("⚡ FinanCasal")
+  ui.createMenu("Home Finance")
     .addItem("Sincronizar Linha Selecionada", "syncSelectedRow")
     .addItem("Sincronizar Todas as Linhas Não Enviadas", "syncAllNewRows")
     .addSeparator()
@@ -42,7 +42,7 @@ function setupSheetHeaders() {
     "Frequência (Fixa/Pontual)",
     "Categoria",
     "Status (Pago/Pendente)",
-    "Responsável (João/Esposa/Casal)",
+    "Responsável (João/Rafaella/Casal)",
     "Vencimento",
     "Sincronizado"
   ];
@@ -50,7 +50,7 @@ function setupSheetHeaders() {
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(headers);
     sheet.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#e2e8f0");
-    SpreadsheetApp.getUi().alert("✅ Cabeçalhos configurados com sucesso! Agora você ou o Google Spark podem preencher as linhas.");
+    SpreadsheetApp.getUi().alert("Cabeçalhos configurados com sucesso! Agora você ou o Google Spark podem preencher as linhas.");
   } else {
     SpreadsheetApp.getUi().alert("A planilha já contém dados.");
   }
@@ -79,7 +79,7 @@ function syncSelectedRow() {
   const success = sendToApp([payload]);
   if (success) {
     sheet.getRange(rowIndex, 10).setValue("SIM (" + Utilities.formatDate(new Date(), "GMT-3", "dd/MM HH:mm") + ")");
-    SpreadsheetApp.getUi().alert("✅ Linha sincronizada com sucesso e já visível no FinanCasal!");
+    SpreadsheetApp.getUi().alert("Linha sincronizada com sucesso e já visível no Home Finance!");
   }
 }
 
@@ -112,8 +112,7 @@ function syncAllNewRows() {
   }
   
   if (itemsToSend.length === 0) {
-    SpreadsheetApp.getUi().alert("Todas as linhas já estão sincronizadas com o FinanCasal!");
-    return;
+    SpreadsheetApp.getUi().alert("Todas as linhas já estão sincronizadas com o Home Finance!");
   }
   
   const success = sendToApp(itemsToSend);
@@ -122,7 +121,7 @@ function syncAllNewRows() {
     rowsToUpdate.forEach(function(r) {
       sheet.getRange(r, 10).setValue(nowStr);
     });
-    SpreadsheetApp.getUi().alert("🎉 " + itemsToSend.length + " transações foram sincronizadas em tempo real com o FinanCasal!");
+    SpreadsheetApp.getUi().alert(itemsToSend.length + " transações foram sincronizadas em tempo real com o Home Finance!");
   }
 }
 
@@ -130,13 +129,10 @@ function syncAllNewRows() {
  * Gatilho automático onEdit: Quando uma linha for preenchida, envia automaticamente
  */
 function onEditTrigger(e) {
-  // Você pode configurar um Acionador (Trigger) 'Ao Editar' no Apps Script
-  // para sincronizar automaticamente quando o Google Spark inserir uma nova linha!
   try {
     const sheet = e.source.getActiveSheet();
     const row = e.range.getRow();
     if (row > 1) {
-      // Pequeno delay ou verificação para evitar envio incompleto
       const rowData = sheet.getRange(row, 1, 1, 10).getValues()[0];
       if (rowData[1] && rowData[2] && !String(rowData[9]).startsWith("SIM")) {
         const payload = formatRowToPayload(rowData);
@@ -151,7 +147,7 @@ function onEditTrigger(e) {
 }
 
 /**
- * Formata os campos da planilha no formato JSON esperado pela API do FinanCasal
+ * Formata os campos da planilha no formato JSON esperado pela API do Home Finance
  */
 function formatRowToPayload(row) {
   let dateStr = "";
@@ -187,7 +183,7 @@ function formatRowToPayload(row) {
 }
 
 /**
- * Faz a chamada HTTP POST para o endpoint do FinanCasal
+ * Faz a chamada HTTP POST para o endpoint do Home Finance
  */
 function sendToApp(items) {
   const payload = {
@@ -211,11 +207,11 @@ function sendToApp(items) {
     if (code >= 200 && code < 300) {
       return true;
     } else {
-      SpreadsheetApp.getUi().alert("Erro (" + code + ") ao enviar para FinanCasal: " + responseText);
+      SpreadsheetApp.getUi().alert("Erro (" + code + ") ao enviar para Home Finance: " + responseText);
       return false;
     }
   } catch (e) {
-    SpreadsheetApp.getUi().alert("Erro de conexão com o FinanCasal: " + e.message);
+    SpreadsheetApp.getUi().alert("Erro de conexão com o Home Finance: " + e.message);
     return false;
   }
 }
