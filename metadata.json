@@ -1,6 +1,0 @@
-{
-  "name": "Home Finance",
-  "description": "Gestão financeira inteligente, controle de despesas e receitas fixas/pontuais, metas de compra, histórico e sincronização em tempo real.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
