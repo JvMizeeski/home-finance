@@ -503,6 +503,7 @@ app.post("/api/reset", (req, res) => {
     {
       id: `log_${Date.now()}`,
       entityType: "system",
+      entityId: "all",
       action: "delete",
       userName: user,
       userAvatar: "bg-rose-600",

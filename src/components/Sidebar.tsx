@@ -30,7 +30,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const { supabaseConfig } = useData();
   const { currentUser, availableUsers, switchUser } = useAuth();
 
-  const navItems = [
+  const navItems: { id: TabType; label: string; icon: typeof LayoutDashboard; highlight?: boolean }[] = [
     {
       id: 'dashboard' as TabType,
       label: 'Visão Geral',
