@@ -7,7 +7,6 @@ import { Navigation, TabType } from './components/Navigation';
 import { DashboardTab } from './components/DashboardTab';
 import { TransactionsTab } from './components/TransactionsTab';
 import { GoalsTab } from './components/GoalsTab';
-import { AuditLogsTab } from './components/AuditLogsTab';
 import { SettingsTab } from './components/SettingsTab';
 import { TransactionModal } from './components/modals/TransactionModal';
 import { GoalModal } from './components/modals/GoalModal';
@@ -91,11 +90,11 @@ function MainApp() {
       {/* Right Content Column (Independently scrollable) */}
       <div className="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto overflow-x-hidden relative z-10">
         
-        {/* Top Header */}
-        <Header />
-
         {/* Main Content Area */}
         <main className="flex-1 w-full px-3.5 sm:px-6 lg:px-8 py-5 sm:py-7 max-w-[1600px] mx-auto pb-24 md:pb-12">
+          {/* Date/Profile Toolbar (moved out of a dedicated top header) */}
+          <Header />
+
           {activeTab === 'dashboard' && (
             <DashboardTab
               onOpenNewTransaction={handleOpenNewTx}
@@ -117,10 +116,6 @@ function MainApp() {
               onEditGoal={handleEditGoal}
               onAddContribution={handleOpenContribution}
             />
-          )}
-
-          {activeTab === 'logs' && (
-            <AuditLogsTab />
           )}
 
           {activeTab === 'settings' && (

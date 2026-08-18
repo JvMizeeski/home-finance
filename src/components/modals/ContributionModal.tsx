@@ -57,7 +57,7 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
         <div className="flex items-center justify-between pb-3 border-b border-white/10">
           <div className="min-w-0">
             <h3 className="text-base font-bold text-white flex items-center gap-1.5">
-              <CircleDollarSign className="w-5 h-5 text-blue-400" />
+              <CircleDollarSign className="w-5 h-5 text-purple-400" />
               Economizar para Meta
             </h3>
             <p className="text-xs text-slate-400 truncate max-w-xs mt-0.5">
@@ -141,7 +141,7 @@ export const ContributionModal: React.FC<ContributionModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-900/30 active:scale-95"
+              className="px-5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-purple-900/30 active:scale-95"
             >
               {isSubmitting ? 'Salvando...' : 'Confirmar Economia'}
             </button>

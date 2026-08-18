@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useData } from '../context/DataContext';
-import { 
-  User, 
-  Trash2, 
-  AlertTriangle, 
-  CheckCircle2, 
-  ShieldAlert, 
-  RotateCcw, 
-  Users, 
-  Mail, 
-  Sliders, 
+import { AuditLogsTab } from './AuditLogsTab';
+import {
+  Trash2,
+  AlertTriangle,
+  CheckCircle2,
+  ShieldAlert,
+  Users,
+  Mail,
   Database,
+  History,
   Info
 } from 'lucide-react';
 
@@ -180,7 +179,26 @@ export const SettingsTab: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Zona Crítica / Zerar Todos os Dados */}
+      {/* 3. Histórico & Logs */}
+      <div className="p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md space-y-4">
+        <div className="flex items-center gap-2.5 border-b border-white/10 pb-4">
+          <div className="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+            <History className="w-5 h-5" />
+          </div>
+          <div>
+            <h3 className="text-sm sm:text-base font-bold text-white">
+              Histórico & Logs
+            </h3>
+            <p className="text-xs text-slate-400">
+              Registro de todas as alterações e sincronizações do sistema.
+            </p>
+          </div>
+        </div>
+
+        <AuditLogsTab />
+      </div>
+
+      {/* 4. Zona Crítica / Zerar Todos os Dados */}
       <div className="p-6 rounded-2xl bg-rose-950/20 border border-rose-500/30 backdrop-blur-md space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div className="flex items-start gap-3 min-w-0">

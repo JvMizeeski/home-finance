@@ -234,7 +234,7 @@ export const GoalModal: React.FC<GoalModalProps> = ({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-blue-900/30 active:scale-95"
+              className="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-purple-900/30 active:scale-95"
             >
               {isSubmitting ? 'Salvando...' : editingGoal ? 'Salvar Alterações' : 'Cadastrar Desejo'}
             </button>

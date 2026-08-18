@@ -1,18 +1,13 @@
 import React from 'react';
-import { 
-  LayoutDashboard, 
-  Receipt, 
-  Target, 
-  History, 
-  Sparkles, 
-  Database,
+import {
+  LayoutDashboard,
+  Receipt,
+  Target,
   Plus,
   Wallet,
-  CheckCircle2,
   ChevronRight,
   Settings
 } from 'lucide-react';
-import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { TabType } from './Navigation';
 
@@ -27,7 +22,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setActiveTab,
   onOpenNewTransaction
 }) => {
-  const { supabaseConfig } = useData();
   const { currentUser, availableUsers, switchUser } = useAuth();
 
   const navItems: { id: TabType; label: string; icon: typeof LayoutDashboard; highlight?: boolean }[] = [
@@ -45,11 +39,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'goals' as TabType,
       label: 'Metas & Desejos',
       icon: Target,
-    },
-    {
-      id: 'logs' as TabType,
-      label: 'Histórico & Logs',
-      icon: History,
     },
     {
       id: 'settings' as TabType,
@@ -128,34 +117,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           );
         })}
       </nav>
-
-      {/* Cloud & Integration Status Box */}
-      <div className="p-3 mx-3 mb-3 bg-white/5 rounded-xl border border-white/10 backdrop-blur-md">
-        <div className="flex items-center justify-between text-xs font-medium text-slate-300 mb-1.5">
-          <span className="flex items-center gap-1.5 text-slate-400">
-            <Database className="w-3.5 h-3.5 text-slate-400" />
-            Supabase
-          </span>
-          {supabaseConfig.isConnected ? (
-            <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              Conectado
-            </span>
-          ) : (
-            <span className="flex items-center gap-1 text-[11px] text-amber-400">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
-              Local
-            </span>
-          )}
-        </div>
-        <div className="flex items-center justify-between text-xs font-medium text-slate-300">
-          <span className="flex items-center gap-1.5 text-slate-400">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-            Google Spark
-          </span>
-          <span className="text-[11px] text-emerald-400 font-semibold">Ativo</span>
-        </div>
-      </div>
 
       {/* User Switcher / Profile Footer */}
       <div className="p-3 border-t border-white/10 bg-slate-950/40">

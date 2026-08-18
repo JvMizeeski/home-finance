@@ -1,14 +1,12 @@
 import React from 'react';
-import { 
-  LayoutDashboard, 
-  Receipt, 
-  Target, 
-  History, 
-  Sparkles,
+import {
+  LayoutDashboard,
+  Receipt,
+  Target,
   Settings
 } from 'lucide-react';
 
-export type TabType = 'dashboard' | 'transactions' | 'goals' | 'logs' | 'settings';
+export type TabType = 'dashboard' | 'transactions' | 'goals' | 'settings';
 
 interface NavigationProps {
   activeTab: TabType;
@@ -36,12 +34,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab 
       icon: Target,
     },
     {
-      id: 'logs' as TabType,
-      label: 'Histórico',
-      shortLabel: 'Logs',
-      icon: History,
-    },
-    {
       id: 'settings' as TabType,
       label: 'Configurações',
       shortLabel: 'Ajustes',
@@ -51,7 +43,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeTab, setActiveTab 
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 bg-slate-900/90 backdrop-blur-2xl border-t border-white/10 z-40 px-2 py-2 shadow-2xl safe-area-bottom">
-      <div className="grid grid-cols-5 gap-1 max-w-md mx-auto">
+      <div className="grid grid-cols-4 gap-1 max-w-md mx-auto">
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = activeTab === item.id;

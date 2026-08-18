@@ -74,12 +74,7 @@ export const AuditLogsTab: React.FC = () => {
       <div className="bg-slate-900/60 rounded-2xl p-5 border border-white/10 backdrop-blur-xl shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20 backdrop-blur-md">
-                Auditoria & Histórico de Atividades
-              </span>
-            </div>
-            <h2 className="text-lg sm:text-xl font-bold text-white mt-1">
+            <h2 className="text-lg sm:text-xl font-bold text-white">
               Registro Transparente de Todas as Modificações
             </h2>
             <p className="text-xs text-slate-300 mt-0.5">

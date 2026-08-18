@@ -342,7 +342,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
             </h3>
             <button
               onClick={() => setActiveTab('goals')}
-              className="text-xs text-blue-400 hover:text-blue-300 font-medium hover:underline"
+              className="text-xs text-purple-400 hover:text-purple-300 font-medium hover:underline"
             >
               Ver todas ({goals.length})
             </button>
@@ -354,7 +354,7 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
               <p className="text-xs text-slate-300">Nenhuma meta ativa.</p>
               <button
                 onClick={onOpenNewGoal}
-                className="mt-2 text-xs font-semibold text-blue-400 hover:underline"
+                className="mt-2 text-xs font-semibold text-purple-400 hover:underline"
               >
                 + Cadastrar Desejo / Meta
               </button>
@@ -367,11 +367,11 @@ export const DashboardTab: React.FC<DashboardTabProps> = ({
                   <div key={goal.id} className="p-3 bg-white/5 rounded-xl border border-white/5">
                     <div className="flex items-center justify-between text-xs mb-1">
                       <span className="font-semibold text-slate-200 truncate max-w-[160px]">{goal.title}</span>
-                      <span className="font-bold text-blue-400">{progress}%</span>
+                      <span className="font-bold text-purple-400">{progress}%</span>
                     </div>
                     <div className="w-full bg-white/10 rounded-full h-2 mb-2 overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full transition-all"
+                      <div
+                        className="h-full bg-gradient-to-r from-purple-500 to-fuchsia-500 rounded-full transition-all"
                         style={{ width: `${progress}%` }}
                       />
                     </div>

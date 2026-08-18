@@ -78,15 +78,7 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
       <div className="bg-gradient-to-r from-purple-950/40 via-slate-900/60 to-blue-950/40 rounded-2xl p-5 sm:p-6 border border-white/10 backdrop-blur-xl shadow-xl">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wider text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded-md border border-purple-500/20 backdrop-blur-md">
-                Lista de Desejos & Metas
-              </span>
-              <span className="text-xs text-slate-400">
-                Economias do Lar & Pessoais
-              </span>
-            </div>
-            <h2 className="text-lg sm:text-xl font-bold text-white mt-1">
+            <h2 className="text-lg sm:text-xl font-bold text-white">
               Sonhos, Compras da Casa & Metas Financeiras
             </h2>
             <p className="text-xs text-slate-300 mt-0.5">
@@ -97,7 +89,7 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
           <button
             id="goals-new-btn"
             onClick={onOpenNewGoal}
-            className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-lg shadow-blue-900/30 transition-all"
+            className="flex items-center justify-center gap-1.5 px-4 py-2.5 bg-purple-600 hover:bg-purple-500 active:scale-95 text-white rounded-xl text-xs sm:text-sm font-semibold shadow-lg shadow-purple-900/30 transition-all"
           >
             <Plus className="w-4 h-4" />
             Novo Desejo / Meta
@@ -120,8 +112,9 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
           </div>
           <div className="p-3.5 bg-white/5 rounded-xl border border-white/5 backdrop-blur-md">
             <div className="text-xs text-slate-400 font-medium">Itens Já Adquiridos / Realizados</div>
-            <div className="text-xl font-bold text-purple-400 mt-0.5">
-              🎉 {completedCount} meta(s)
+            <div className="text-xl font-bold text-purple-400 mt-0.5 flex items-center gap-1.5">
+              <Sparkles className="w-4 h-4" />
+              {completedCount} meta(s)
             </div>
           </div>
         </div>
@@ -132,19 +125,21 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
         <div className="flex items-center bg-slate-900/60 p-1 rounded-xl border border-white/10 text-xs backdrop-blur-md">
           <button
             onClick={() => setFilterStatus('active')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all ${
               filterStatus === 'active' ? 'bg-white/15 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white'
             }`}
           >
-            🎯 Em Andamento ({goals.filter(g => g.status === 'active').length})
+            <Target className="w-3.5 h-3.5" />
+            Em Andamento ({goals.filter(g => g.status === 'active').length})
           </button>
           <button
             onClick={() => setFilterStatus('completed')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all ${
               filterStatus === 'completed' ? 'bg-white/15 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white'
             }`}
           >
-            ✅ Já Adquiridos ({completedCount})
+            <CheckCircle2 className="w-3.5 h-3.5" />
+            Já Adquiridos ({completedCount})
           </button>
           <button
             onClick={() => setFilterStatus('all')}
@@ -181,7 +176,7 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
           </p>
           <button
             onClick={onOpenNewGoal}
-            className="mt-4 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 shadow-lg shadow-blue-900/30 transition-all"
+            className="mt-4 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-xl inline-flex items-center gap-1.5 shadow-lg shadow-purple-900/30 transition-all"
           >
             <Plus className="w-4 h-4" />
             Cadastrar Novo Desejo
@@ -247,9 +242,9 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
                         href={goal.purchaseUrl.startsWith('http') ? goal.purchaseUrl : `https://${goal.purchaseUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-white/10 hover:bg-white/20 text-blue-300 border border-white/10 transition-colors group"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-white/10 hover:bg-white/20 text-purple-300 border border-white/10 transition-colors group"
                       >
-                        <ExternalLink className="w-3.5 h-3.5 text-blue-400 group-hover:text-blue-200" />
+                        <ExternalLink className="w-3.5 h-3.5 text-purple-400 group-hover:text-purple-200" />
                         <span className="truncate max-w-[200px]">Acessar Link da Loja / Compra</span>
                       </a>
                     </div>
@@ -259,7 +254,7 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
                   <div className="mt-4 pt-3 border-t border-white/10">
                     <div className="flex items-baseline justify-between text-xs mb-1.5">
                       <span className="text-slate-400 font-medium">Progresso da Economia</span>
-                      <span className={`font-bold text-sm ${isCompleted ? 'text-emerald-400' : 'text-blue-400'}`}>
+                      <span className={`font-bold text-sm ${isCompleted ? 'text-emerald-400' : 'text-purple-400'}`}>
                         {progress}%
                       </span>
                     </div>
@@ -268,7 +263,7 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
                     <div className="w-full bg-white/10 rounded-full h-2.5 overflow-hidden">
                       <div
                         className={`h-2.5 rounded-full transition-all duration-500 ${
-                          isCompleted ? 'bg-emerald-500' : 'bg-gradient-to-r from-blue-500 to-purple-500'
+                          isCompleted ? 'bg-emerald-500' : 'bg-gradient-to-r from-purple-500 to-fuchsia-500'
                         }`}
                         style={{ width: `${progress}%` }}
                       />
@@ -323,7 +318,7 @@ export const GoalsTab: React.FC<GoalsTabProps> = ({
                     <>
                       <button
                         onClick={() => onAddContribution(goal)}
-                        className="flex-1 flex items-center justify-center gap-1 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-blue-900/30 active:scale-95"
+                        className="flex-1 flex items-center justify-center gap-1 py-2 bg-purple-600 hover:bg-purple-500 text-white text-xs font-semibold rounded-xl transition-all shadow-md shadow-purple-900/30 active:scale-95"
                       >
                         <CircleDollarSign className="w-3.5 h-3.5" />
                         + Economizar
